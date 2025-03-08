@@ -10,11 +10,12 @@ def temp() -> DataFrame:
     """
     return read_csv("data/temperature.csv")
 
-def get_public_holidays(public_holidays_url: str, year: str) -> DataFrame:
+def get_public_holidays(public_holidays_url: str, year: str, country: str) -> DataFrame:
     """Get the public holidays for the given year for Brazil.
     Args:
         public_holidays_url (str): url to the public holidays.
         year (str): The year to get the public holidays for.
+        country (str): The country to get the public holidays for.
     Raises:
         SystemExit: If the request fails.
     Returns:
@@ -28,11 +29,25 @@ def get_public_holidays(public_holidays_url: str, year: str) -> DataFrame:
     # Debes lanzar SystemExit si la solicitud falla. Investiga el método raise_for_status
     # de la biblioteca requests.
 
-    raise NotImplementedError
-
+    if(len(country) > 2):
+        raise ValueError("Pais debe ser de dos caracteres")
+    
+    url = f"{public_holidays_url}/{year}/{country}"
+    response = requests.get(url)
+    
+    try:
+        response.raise_for_status()
+        holidays = read_json(response.text)
+        holidays = DataFrame(holidays)
+        holidays["date"] = to_datetime(holidays["date"])
+        holidays = holidays.drop(columns=["types", "counties"])
+        return holidays
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
 
 def extract(
-    csv_folder: str, csv_table_mapping: Dict[str, str], public_holidays_url: str
+    csv_folder: str, csv_table_mapping: Dict[str, str], public_holidays_url: str,
+    year: str, country: str
 ) -> Dict[str, DataFrame]:
     """Extract the data from the csv files and load them into the dataframes.
     Args:
@@ -49,7 +64,7 @@ def extract(
         for csv_file, table_name in csv_table_mapping.items()
     }
 
-    holidays = get_public_holidays(public_holidays_url, "2017")
+    holidays = get_public_holidays(public_holidays_url, year, country)
 
     dataframes["public_holidays"] = holidays
 

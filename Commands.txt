@@ -1,0 +1,23 @@
+//Listar Envs
+conda env list
+
+//Crear Envs
+conda create --name pipeline python=3.10.10
+
+//Activar Envs
+conde activate pipeline
+
+//Instalar librerias
+pip install -r requirements.txt
+
+//Listar librerias
+pip list
+
+//Ver version Python
+python --version
+
+//Desactivar Envs
+conda deactivate
+
+//Ejecutar tests
+pytest tests/test_extract.py
