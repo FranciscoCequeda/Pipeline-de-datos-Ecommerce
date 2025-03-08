@@ -5,7 +5,7 @@ conda env list
 conda create --name pipeline python=3.10.10
 
 //Activar Envs
-conde activate pipeline
+conda activate pipeline
 
 //Instalar librerias
 pip install -r requirements.txt
