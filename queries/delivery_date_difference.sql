@@ -8,3 +8,22 @@
 -- 2. Puedes usar la función CAST para convertir un número a un entero.
 -- 3. Puedes usar la función STRFTIME para convertir order_delivered_customer_date a una cadena, eliminando horas, minutos y segundos.
 -- 4. order_status == 'delivered' AND order_delivered_customer_date IS NOT NULL
+SELECT customer_state AS State,
+    CAST(
+        AVG(
+            JULIANDAY(
+                STRFTIME("%Y-%m-%d", order_estimated_delivery_date)
+            ) - JULIANDAY(
+                STRFTIME("%Y-%m-%d", order_delivered_customer_date)
+            )
+        ) AS INT
+    ) AS Delivery_Difference
+FROM olist_orders
+    INNER JOIN olist_customers ON olist_orders.customer_id = olist_customers.customer_id
+WHERE (
+        olist_orders.order_status == 'delivered'
+        AND olist_orders.order_delivered_customer_date IS NOT NULL
+    )
+GROUP BY customer_state
+ORDER BY Delivery_Difference ASC,
+    State ASC;
