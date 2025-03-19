@@ -22,6 +22,8 @@ from src.config import get_csv_to_table_mapping
 from src.transform import QueryResult
 
 TOLERANCE = 0.1
+year = "2017"
+country = "BR"
 
 
 def to_float(objs, year_col):
@@ -47,7 +49,7 @@ def database() -> Engine:
     csv_folder = DATASET_ROOT_PATH
     public_holidays_url = PUBLIC_HOLIDAYS_URL
     csv_table_mapping = get_csv_to_table_mapping()
-    csv_dataframes = extract(csv_folder, csv_table_mapping, public_holidays_url)
+    csv_dataframes = extract(csv_folder, csv_table_mapping, public_holidays_url, year, country)
     load(data_frames=csv_dataframes, database=engine)
     return engine
 
